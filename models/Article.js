@@ -19,9 +19,9 @@ var ArticleSchema = new Schema({
   blurb: {
     type: String
   },
-  featureName: {
-    type: String
-  },
+  // featureName: {
+  //   type: String
+  // },
   // This only saves one note's ObjectId, ref refers to the Note model
   note: {
     type: Schema.Types.ObjectId,
