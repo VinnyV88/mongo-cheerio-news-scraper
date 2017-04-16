@@ -72,10 +72,49 @@
 }
 
 #articles {
-  display: inline-block;
+  /*display: inline-block;*/
+  color: black;
   overflow: auto;
-  width: 60%;
-  height: 700px;
+  margin-top: 15%;
+  background-image: url("../images/sayagata.png");
+  background-repeat: repeat;
+  width: 100%;
+}
+
+.save-article {
+  float: right;
+}
+
+.article-box {
+  /*width: 80%;*/
+  /*margin-left: 10%;*/
+  margin-top: 10px;
+  min-height: 150px;
+  background-color: white;
+  box-shadow: 5px 5px 5px #888888;
+}
+
+.article-title {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  color: white;
+  background-color: #558B2F;
+}
+
+.article-title>a {
+  color: white;
+}
+
+.article-link {
+  font-size: 22px;
+}
+
+.article-blurb {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  color: black;
 }
 
 #notes {

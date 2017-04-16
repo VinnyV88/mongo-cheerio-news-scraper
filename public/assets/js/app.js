@@ -5,8 +5,27 @@ $(document).on("click", "#get-articles", function() {
 $.getJSON("/scrape", function(data) {
   // For each one
   for (var i = 0; i < data.length; i++) {
-    // Display the apropos information on the page
-    $("#articles").append("<p>" + data[i].title + "<br />" + data[i].link + "<br />" + data[i].blurb + "</p>");
+    var $articleRow = $("<div>").addClass("row");
+    var $articeBoxDiv = $("<div>").addClass("article-box text-left col-md-10 col-md-offset-1");
+    var $headerRow = $("<div>").addClass("row");
+    var $linkDiv = $("<div>").addClass("article-title col-md-12");
+    var $a = ($("<a>").addClass("article-link").attr("href", data[i].link).attr("target", "_blank"));
+    var $button = $("<button>").addClass("btn-danger save-article col-md-1").text("Save Article").data("title", data[i].title)
+                  .data("link", data[i].link).data("blurb", data[i].blurb)
+    var $blurbRow = $("<div>").addClass("row");
+    var $p = $("<p>").addClass("article-blurb col-md-12").text(data[i].blurb);
+
+    
+    $a.text(data[i].title);
+    $linkDiv.append($a).append($button);
+    $headerRow.append($linkDiv)
+
+    $blurbRow.append($p);
+
+    $articeBoxDiv.append($headerRow).append($blurbRow)
+
+    $articleRow.append($articeBoxDiv);
+    $("#articles").append($articleRow);
   }
 });
 
