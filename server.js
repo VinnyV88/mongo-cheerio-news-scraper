@@ -62,7 +62,7 @@ app.get("/scrape", function (req, res) {
       result.link = $(this).children("a").attr("href");
       result.blurb = $(this).siblings("div.blurb").text();
 
-      if (result.title && result.link ) results.push(result);
+      if (result.title && result.link) results.push(result);
 
     })).then(res.send(results))
   })
