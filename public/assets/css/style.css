@@ -130,12 +130,40 @@
   margin-left: 10px;
 }
 
+.note-box {
+  /*width: 80%;*/
+  /*margin-left: 10%;*/
+  margin-top: 10px;
+  min-height: 150px;
+  background-color: white;
+  box-shadow: 5px 5px 5px #888888;
+}
+
+.note-title {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  color: white;
+  background-color: #558B2F;
+}
+
+.note-title>a {
+  color: white;
+}
+
+.note-body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  color: black;
+}
+
 .modal-header {
   color: white;
   background-color: #558B2F;
 }
 
-#notes {
+/*#notes {
   float: right;
   width: 30%;
 }
@@ -155,4 +183,4 @@ input {
 textarea {
   height: 200px;
   font-size: 18px;
-}
+}*/

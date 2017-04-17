@@ -15,25 +15,23 @@ $(document).ready(function () {
 
       for (var i = 0; i < data.length; i++) {
         var $articleRow = $("<div>").addClass("row");
-        var $articeBoxDiv = $("<div>").addClass("article-box text-left col-md-10 col-md-offset-1");
-        var $headerRow = $("<div>").addClass("row");
-        var $linkDiv = $("<div>").addClass("article-title col-md-12");
-        var $a = ($("<a>").addClass("article-link").attr("href", data[i].link).attr("target", "_blank"));
-        var $button = $("<button>").addClass("btn-danger save-article col-md-1").text("Save Article").data("title", data[i].title)
-          .data("link", data[i].link).data("blurb", data[i].blurb)
+        var $articleBoxDiv = $("<div>").addClass("article-box text-left col-md-10 col-md-offset-1");
+        var $headerRow = $("<div>").addClass("row article-title");
+        var $a = ($("<a>").addClass("article-link col-md-11").attr("href", data[i].link).attr("target", "_blank"));
+        var $buttonDiv = $("<div>").addClass("col-md-1 text-right")
+          .append($("<button>").addClass("btn-danger save-article").text("Save Article").data("title", data[i].title).data("link", data[i].link).data("blurb", data[i].blurb));
         var $blurbRow = $("<div>").addClass("row");
         var $p = $("<p>").addClass("article-blurb col-md-12").text(data[i].blurb);
 
 
         $a.text(data[i].title);
-        $linkDiv.append($a).append($button);
-        $headerRow.append($linkDiv)
+        $headerRow.append($a).append($buttonDiv);
 
         $blurbRow.append($p);
 
-        $articeBoxDiv.append($headerRow).append($blurbRow)
+        $articleBoxDiv.append($headerRow).append($blurbRow)
 
-        $articleRow.append($articeBoxDiv);
+        $articleRow.append($articleBoxDiv);
         $("#articles").append($articleRow);
       }
     });
@@ -69,6 +67,9 @@ $(document).ready(function () {
 
   $(document).on("click", "#get-saved-articles", function () {
 
+    $(this).parent().addClass("active");
+    $(this).parent().siblings().removeClass("active");
+
     $("#articles").empty();
 
     document.body.style.cursor = "wait";
@@ -82,9 +83,8 @@ $(document).ready(function () {
 
       for (var i = 0; i < data.length; i++) {
         var $articleRow = $("<div>").addClass("row");
-        var $articeBoxDiv = $("<div>").addClass("article-box text-left col-md-10 col-md-offset-1");
+        var $articleBoxDiv = $("<div>").addClass("article-box text-left col-md-10 col-md-offset-1");
         var $headerRow = $("<div>").addClass("row saved-article-title");
-        // var $linkDiv = $("<div>").addClass("saved-article-title col-md-12");
         var $a = ($("<a>").addClass("article-link col-md-10").attr("href", data[i].link).attr("target", "_blank"));
         var $buttonsDiv = $("<div>").addClass("col-md-2 text-right")
                           .append($("<button>").addClass("btn-success article-notes").text("Notes").data("_id", data[i]._id))
@@ -95,14 +95,13 @@ $(document).ready(function () {
 
 
         $a.text(data[i].title);
-        // $linkDiv.append($a).append($noteButton).append($delButton);
         $headerRow.append($a).append($buttonsDiv);
 
         $blurbRow.append($p);
 
-        $articeBoxDiv.append($headerRow).append($blurbRow)
+        $articleBoxDiv.append($headerRow).append($blurbRow)
 
-        $articleRow.append($articeBoxDiv);
+        $articleRow.append($articleBoxDiv);
         $("#articles").append($articleRow);
       }
     });
@@ -128,6 +127,70 @@ $(document).ready(function () {
     // $("#titleinput").val("");
     // $("#bodyinput").val("");
   });
+
+  $(document).on("click", ".article-notes", function () {
+
+    var article_id = $(this).data("_id");
+
+    $(".notes-well").empty();
+
+    $.getJSON("/notes/" + article_id, function (data) {
+
+      for (var i = 0; i < data.length; i++) {
+        var $articleNoteRow = $("<div>").addClass("row");
+        var $noteBoxDiv = $("<div>").addClass("note-box text-left col-md-10 col-md-offset-1");
+        var $headerRow = $("<div>").addClass("row note-title");
+        var $a = ($("<a>").addClass("article-link col-md-11").attr("href", data[i].link).attr("target", "_blank"));
+        var $buttonDiv = $("<div>").addClass("col-md-1 text-right")
+                          .append($("<button>").addClass("btn-danger delete-note").text("Delete").data("_id", data[i]._id).data("article_id", article_id));
+        var $noteRow = $("<div>").addClass("row");
+        var $p = $("<p>").addClass("note-body col-md-12").text(data[i].body);
+
+
+        $a.text(data[i].title);
+        $headerRow.append($a).append($buttonDiv);
+
+        $noteRow.append($p);
+
+        $noteBoxDiv.append($headerRow).append($noteRow)
+
+        $articleNoteRow.append($noteBoxDiv);
+        $(".notes-well").append($articleNoteRow);
+      }
+      
+      $("#notesModal").modal("toggle");
+
+    });
+
+  });
+
+  $(document).on("click", "#note-save", function () {
+    var article_id = $(this).data("article_id");
+    var noteTitle = $("#note-title").val();
+    var noteBody = $("#note-body").val();
+    // Run a POST request to change the note, using what's entered in the inputs
+    $.ajax({
+      method: "POST",
+      url: "/note/" + article_id,
+      data: {
+        title: noteTitle,
+        body: noteBody
+      }
+    })
+      .done(function (data) {
+        // Log the response
+        console.log(data);
+        $("#note-title").val("");
+        $("#note-body").val("");
+        $("#notesModal").modal("toggle");
+        $("#article-notes").trigger("click");
+      });
+
+    // Also, remove the values entered in the input and textarea for note entry
+    // $("#titleinput").val("");
+    // $("#bodyinput").val("");
+  });
+
 
 
 

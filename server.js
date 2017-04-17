@@ -102,14 +102,6 @@ app.delete("/articles/:id", function (req, res) {
 
 
 
-// This will grab an article by it's ObjectId
-app.get("/articles/:id", function (req, res) {
-
-
-
-});
-
-// Create a new note or replace an existing note
 app.post("/article", function (req, res) {
 
       var data = {};
@@ -132,6 +124,58 @@ app.post("/article", function (req, res) {
         else {
           console.log(doc);
           res.send(doc);
+        }
+      });
+});
+
+app.get("/notes/:id", function(req, res) {
+  // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+  Article.findOne({ "_id": req.params.id })
+  // ..and populate all of the notes associated with it
+  .populate("notes")
+  // now, execute our query
+  .exec(function(error, doc) {
+    // Log any errors
+    if (error) {
+      console.log(error);
+    }
+    // Otherwise, send the doc to the browser as a json object
+    else {
+      res.json(doc);
+    }
+  });
+});
+
+app.post("/note/:articleId", function (req, res) {
+      
+      var article_id = req.params.articleId;
+      var data = {};
+
+      console.log(req.body);
+
+      data.title = req.body.title;
+      data.body = req.body.body;
+
+      var note = new Note(data);
+
+      // Now, save that note to the db
+      note.save(function(err, doc) {
+        // Log any errors
+        if (err) {
+          console.log(err);
+        }
+        // Or log the doc
+        else {
+          Article.findOneAndUpdate({_id: article_id}, { $push: { "notes": doc._id } }, { new: true }, function(err, newdoc) {
+            // Send any errors to the browser
+            if (err) {
+              console.log(err);
+            }
+            // Or send the newdoc to the browser
+            else {
+              res.send(newdoc);
+            }
+          });
         }
       });
 });
