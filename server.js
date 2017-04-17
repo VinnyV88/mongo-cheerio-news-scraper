@@ -68,27 +68,43 @@ app.get("/scrape", function (req, res) {
   })
 });
 
-// This will get the articles we scraped from the mongoDB
+// This will get the articles we saved to the mongoDB
 app.get("/articles", function (req, res) {
 
-
-  // TODO: Finish the route so it grabs all of the articles
-
+  Article.find({}, function(error, doc) {
+    // Log any errors
+    if (error) {
+      console.log(error);
+    }
+    // Or send the doc to the browser as a json object
+    else {
+      res.json(doc);
+    }
+  });
 
 });
 
 // This will grab an article by it's ObjectId
+app.delete("/articles/:id", function (req, res) {
+
+  Article.findByIdAndRemove(req.params.id, function (err, doc) {  
+      // We'll create a simple object to send back with a message and the id of the document that was removed
+      // You can really do this however you want, though.
+      var response = {
+          message: "Article successfully deleted",
+          id: doc._id
+      };
+      res.send(response);
+  });
+
+
+});
+
+
+
+// This will grab an article by it's ObjectId
 app.get("/articles/:id", function (req, res) {
 
-
-  // TODO
-  // ====
-
-  // Finish the route so it finds one article using the req.params.id,
-
-  // and run the populate method with "note",
-
-  // then responds with the article with the note included
 
 
 });
@@ -118,18 +134,6 @@ app.post("/article", function (req, res) {
           res.send(doc);
         }
       });
-
-
-  // TODO
-  // ====
-
-  // save the new note that gets posted to the Notes collection
-
-  // then find an article from the req.params.id
-
-  // and update it's "note" property with the _id of the new note
-
-
 });
 
 

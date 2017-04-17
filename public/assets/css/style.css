@@ -103,7 +103,7 @@
   background-color: #558B2F;
 }
 
-.article-title>a {
+.article-title>a, .saved-article-title>a {
   color: white;
 }
 
@@ -116,6 +116,23 @@
   padding-bottom: 20px;
   padding-left: 10px;
   color: black;
+}
+
+.saved-article-title {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 10px;
+  color: white;
+  background-color: #FB8C00;
+}
+
+.delete-saved-article {
+  margin-left: 10px;
+}
+
+.modal-header {
+  color: white;
+  background-color: #558B2F;
 }
 
 #notes {
