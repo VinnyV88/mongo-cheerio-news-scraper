@@ -38,7 +38,8 @@
 }*/
 
 .mid-section {
-  background-image: url("../images/newspaper.jpg");
+  /*background-image: url("../images/newspaper.jpg");*/
+  background-image: url("../images/news.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;

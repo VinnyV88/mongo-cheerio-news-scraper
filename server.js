@@ -94,7 +94,30 @@ app.get("/articles/:id", function (req, res) {
 });
 
 // Create a new note or replace an existing note
-app.post("/articles/:id", function (req, res) {
+app.post("/article", function (req, res) {
+
+      var data = {};
+
+      console.log(req.body);
+
+      data.title = req.body.title;
+      data.link = req.body.link;
+      data.blurb = req.body.blurb;
+
+      var entry = new Article(data);
+
+      // Now, save that entry to the db
+      entry.save(function(err, doc) {
+        // Log any errors
+        if (err) {
+          console.log(err);
+        }
+        // Or log the doc
+        else {
+          console.log(doc);
+          res.send(doc);
+        }
+      });
 
 
   // TODO
