@@ -134,17 +134,17 @@
   /*width: 80%;*/
   /*margin-left: 10%;*/
   margin-top: 10px;
-  min-height: 150px;
-  background-color: white;
+  min-height: 130px;
+  background-color: #FFFF9B;
   box-shadow: 5px 5px 5px #888888;
 }
 
 .note-title {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  padding-left: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 0px;
   color: white;
-  background-color: #558B2F;
+  background-color: #C4Af00;
 }
 
 .note-title>a {
@@ -161,6 +161,11 @@
 .modal-header {
   color: white;
   background-color: #558B2F;
+}
+
+.note-modal-header {
+  color: white;
+  background-color: #726600;
 }
 
 /*#notes {

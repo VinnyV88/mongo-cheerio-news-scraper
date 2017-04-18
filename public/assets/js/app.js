@@ -122,33 +122,33 @@ $(document).ready(function () {
         $(".info-message").html("<h3>Article with Id: " + data.id + " was deleted!</h3>");
         $("#msgModal").modal("toggle");
       });
-
-    // Also, remove the values entered in the input and textarea for note entry
-    // $("#titleinput").val("");
-    // $("#bodyinput").val("");
   });
 
   $(document).on("click", ".article-notes", function () {
 
     var article_id = $(this).data("_id");
 
+    //save the article_id to the save button so that we can retrieve it later for the save
+    $("#note-save").data("article_id", article_id);
+
     $(".notes-well").empty();
 
     $.getJSON("/notes/" + article_id, function (data) {
 
-      for (var i = 0; i < data.length; i++) {
-        var $articleNoteRow = $("<div>").addClass("row");
-        var $noteBoxDiv = $("<div>").addClass("note-box text-left col-md-10 col-md-offset-1");
+      $("#notes-header").html("<span class=\"fa fa-sticky-note-o\" style=\"font-size:24px\"></span> " + data.title)
+
+      for (var i = 0; i < data.notes.length; i++) {
+        var $articleNoteRow = $("<div>").addClass("row")
+        .attr("style", "margin-right: 0px;margin-left: 0px; margin-bottom: 10px;");
+        var $noteBoxDiv = $("<div>").addClass("note-box text-left col-md-12");
         var $headerRow = $("<div>").addClass("row note-title");
-        var $a = ($("<a>").addClass("article-link col-md-11").attr("href", data[i].link).attr("target", "_blank"));
+        var $title = $("<h4>").addClass("col-md-11").text(data.notes[i].title);
         var $buttonDiv = $("<div>").addClass("col-md-1 text-right")
-                          .append($("<button>").addClass("btn-danger delete-note").text("Delete").data("_id", data[i]._id).data("article_id", article_id));
+                          .append($("<button>").addClass("btn-danger delete-note").text("X").data("_id", data.notes[i]._id).data("article_id", article_id));
         var $noteRow = $("<div>").addClass("row");
-        var $p = $("<p>").addClass("note-body col-md-12").text(data[i].body);
+        var $p = $("<p>").addClass("note-body col-md-12").text(data.notes[i].body);
 
-
-        $a.text(data[i].title);
-        $headerRow.append($a).append($buttonDiv);
+        $headerRow.append($title).append($buttonDiv);
 
         $noteRow.append($p);
 
@@ -179,18 +179,24 @@ $(document).ready(function () {
     })
       .done(function (data) {
         // Log the response
-        console.log(data);
         $("#note-title").val("");
         $("#note-body").val("");
-        $("#notesModal").modal("toggle");
-        $("#article-notes").trigger("click");
       });
 
-    // Also, remove the values entered in the input and textarea for note entry
-    // $("#titleinput").val("");
-    // $("#bodyinput").val("");
   });
 
+  $(document).on("click", ".delete-note", function () {
+    var articleId = $(this).data("article_id");
+    var id = $(this).data("_id");
+
+    $.ajax({
+      method: "DELETE",
+      url: "/note/" + id + "/" + articleId,
+    })
+      .done(function (data) {
+        $("#notesModal").modal("toggle");
+      });
+  });
 
 
 

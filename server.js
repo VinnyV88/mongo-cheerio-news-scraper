@@ -71,7 +71,7 @@ app.get("/scrape", function (req, res) {
 // This will get the articles we saved to the mongoDB
 app.get("/articles", function (req, res) {
 
-  Article.find({}, function(error, doc) {
+  Article.find({}, function (error, doc) {
     // Log any errors
     if (error) {
       console.log(error);
@@ -87,14 +87,14 @@ app.get("/articles", function (req, res) {
 // This will grab an article by it's ObjectId
 app.delete("/articles/:id", function (req, res) {
 
-  Article.findByIdAndRemove(req.params.id, function (err, doc) {  
-      // We'll create a simple object to send back with a message and the id of the document that was removed
-      // You can really do this however you want, though.
-      var response = {
-          message: "Article successfully deleted",
-          id: doc._id
-      };
-      res.send(response);
+  Article.findByIdAndRemove(req.params.id, function (err, doc) {
+    // We'll create a simple object to send back with a message and the id of the document that was removed
+    // You can really do this however you want, though.
+    var response = {
+      message: "Article successfully deleted",
+      id: doc._id
+    };
+    res.send(response);
   });
 
 
@@ -104,82 +104,124 @@ app.delete("/articles/:id", function (req, res) {
 
 app.post("/article", function (req, res) {
 
-      var data = {};
+  var data = {};
 
-      console.log(req.body);
+  console.log(req.body);
 
-      data.title = req.body.title;
-      data.link = req.body.link;
-      data.blurb = req.body.blurb;
+  data.title = req.body.title;
+  data.link = req.body.link;
+  data.blurb = req.body.blurb;
 
-      var entry = new Article(data);
+  var entry = new Article(data);
 
-      // Now, save that entry to the db
-      entry.save(function(err, doc) {
-        // Log any errors
-        if (err) {
-          console.log(err);
-        }
-        // Or log the doc
-        else {
-          console.log(doc);
-          res.send(doc);
-        }
-      });
-});
-
-app.get("/notes/:id", function(req, res) {
-  // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
-  Article.findOne({ "_id": req.params.id })
-  // ..and populate all of the notes associated with it
-  .populate("notes")
-  // now, execute our query
-  .exec(function(error, doc) {
+  // Now, save that entry to the db
+  entry.save(function (err, doc) {
     // Log any errors
-    if (error) {
-      console.log(error);
+    if (err) {
+      console.log(err);
     }
-    // Otherwise, send the doc to the browser as a json object
+    // Or log the doc
     else {
-      res.json(doc);
+      console.log(doc);
+      res.send(doc);
     }
   });
 });
 
+app.get("/notes/:id", function (req, res) {
+  // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+  Article.findOne({
+      "_id": req.params.id
+    })
+    // ..and populate all of the notes associated with it
+    .populate("notes")
+    // now, execute our query
+    .exec(function (error, doc) {
+      // Log any errors
+      if (error) {
+        console.log(error);
+      }
+      // Otherwise, send the doc to the browser as a json object
+      else {
+        res.json(doc);
+      }
+    });
+});
+
 app.post("/note/:articleId", function (req, res) {
-      
-      var article_id = req.params.articleId;
-      var data = {};
 
-      console.log(req.body);
+  var article_id = req.params.articleId;
+  var data = {};
 
-      data.title = req.body.title;
-      data.body = req.body.body;
+  console.log(req.body);
 
-      var note = new Note(data);
+  data.title = req.body.title;
+  data.body = req.body.body;
 
-      // Now, save that note to the db
-      note.save(function(err, doc) {
-        // Log any errors
+  var note = new Note(data);
+
+  // Now, save that note to the db
+  note.save(function (err, doc) {
+    // Log any errors
+    if (err) {
+      console.log(err);
+    }
+    // Or log the doc
+    else {
+      Article.findOneAndUpdate({
+        _id: article_id
+      }, {
+        $push: {
+          "notes": doc._id
+        }
+      }, {
+        new: true
+      }, function (err, newdoc) {
+        // Send any errors to the browser
         if (err) {
           console.log(err);
         }
-        // Or log the doc
+        // Or send the newdoc to the browser
         else {
-          Article.findOneAndUpdate({_id: article_id}, { $push: { "notes": doc._id } }, { new: true }, function(err, newdoc) {
-            // Send any errors to the browser
-            if (err) {
-              console.log(err);
-            }
-            // Or send the newdoc to the browser
-            else {
-              res.send(newdoc);
-            }
-          });
+          res.send(newdoc);
         }
       });
+    }
+  });
 });
 
+app.delete("/note/:id/:articleId", function (req, res) {
+
+  var id = req.params.id;
+  var article_id = req.params.articleId;
+  var data = {};
+
+  Note.findOneAndRemove({
+    _id: id
+  }, function (err, response) {
+    if (err) throw err;
+    else {
+      Article.findOneAndUpdate({
+        _id: article_id
+      }, {
+        $pull: {
+          "notes": id
+        }
+      }, {
+        new: true
+      }, function (err, newdoc) {
+        // Send any errors to the browser
+        if (err) {
+          console.log(err);
+        }
+        // Or send the newdoc to the browser
+        else {
+          res.send(newdoc);
+        }
+      });
+    }
+  });
+});
 
 // Listen on port 3000
 app.listen(3000, function () {
