@@ -8,11 +8,12 @@ var Article = require("./models/Article.js");
 // Our scraping tools
 var request = require("request");
 var cheerio = require("cheerio");
-var Q = require("q");
 // Q is a Promise library used to add promises to functions that do not have them natively 
+var Q = require("q");
 // Set mongoose to leverage built in JavaScript ES6 Promises
 mongoose.Promise = Promise;
 
+var PORT = process.env.PORT || 3000;
 
 // Initialize Express
 var app = express();
@@ -26,8 +27,10 @@ app.use(bodyParser.urlencoded({
 // Make public a static dir
 app.use(express.static("public"));
 
-// Database configuration with mongoose
-mongoose.connect("mongodb://localhost/wapoNewsScraper");
+// Database configuration with mongoose (DEV)
+// mongoose.connect("mongodb://localhost/wapoNewsScraper");
+// Database configuration with mongoose (PROD)
+mongoose.connect("mongodb://heroku_p8w3vfxb:g523kob0lqlntj3hjtfuor1e05@ds163020.mlab.com:63020/heroku_p8w3vfxb");
 var db = mongoose.connection;
 
 // Show any mongoose errors
@@ -223,7 +226,6 @@ app.delete("/note/:id/:articleId", function (req, res) {
   });
 });
 
-// Listen on port 3000
-app.listen(3000, function () {
-  console.log("App running on port 3000!");
+app.listen(PORT, function () {
+  console.log("App running on port " + PORT + "!");
 });
