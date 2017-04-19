@@ -73,13 +73,20 @@
 }
 
 #articles {
-  /*display: inline-block;*/
+  /*display: none;*/
+  visibility: hidden;
   color: black;
   overflow: auto;
   margin-top: 15%;
+  padding-bottom: 5%;
   background-image: url("../images/sayagata.png");
   background-repeat: repeat;
   width: 100%;
+}
+
+.articles-row {
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .save-article {
@@ -166,6 +173,18 @@
 .note-modal-header {
   color: white;
   background-color: #726600;
+}
+
+#hdr-h1 {
+  font-family: 'Bree Serif', serif;
+}
+
+#hdr-h2 {
+  font-family: 'Courgette', cursive;
+}
+
+#hdr-h3 {
+  font-family: 'Bree Serif', serif;
 }
 
 /*#notes {

@@ -1,12 +1,30 @@
 $(document).ready(function () {
+  
+  $(document).on("click", "#home", function () {
+
+    $("#home").parent().addClass("active");
+    $("#home").parent().siblings().removeClass("active");
+
+    $("#hdr-h3").html("");
+    
+    $("#articles").empty();
+    $("#articles").css("visibility", "hidden");
+
+  });
 
   $(document).on("click", "#get-articles", function () {
+
+    $("#home").parent().addClass("active");
+    $("#home").parent().siblings().removeClass("active");
+
+    $("#hdr-h3").html("Retrieving Latest Articles...");
 
     document.body.style.cursor = "wait";
 
     $.getJSON("/scrape", function (data) {
 
       $("#articles").empty();
+      $("#articles").css("visibility", "hidden");
 
       document.body.style.cursor = "default";
 
@@ -14,7 +32,7 @@ $(document).ready(function () {
       $("#msgModal").modal("toggle");
 
       for (var i = 0; i < data.length; i++) {
-        var $articleRow = $("<div>").addClass("row");
+        var $articleRow = $("<div>").addClass("row articles-row");
         var $articleBoxDiv = $("<div>").addClass("article-box text-left col-md-10 col-md-offset-1");
         var $headerRow = $("<div>").addClass("row article-title");
         var $a = ($("<a>").addClass("article-link col-md-11").attr("href", data[i].link).attr("target", "_blank"));
@@ -34,6 +52,11 @@ $(document).ready(function () {
         $articleRow.append($articleBoxDiv);
         $("#articles").append($articleRow);
       }
+    })
+    .done(function(data) {
+      $("#hdr-h3").html("Latest Scraped Articles");
+       if (data.length > 0) $("#articles").css("visibility", "visible");
+       else $("#articles").css("visibility", "hidden");
     });
 
   });
@@ -43,6 +66,10 @@ $(document).ready(function () {
     var articleTitle = $(this).data("title");
     var articleLink = $(this).data("link");
     var articleBlurb = $(this).data("blurb");
+
+    $("#hdr-h3").html("Saving Article...");
+    
+
     // Run a POST request to change the note, using what's entered in the inputs
     $.ajax({
       method: "POST",
@@ -57,6 +84,7 @@ $(document).ready(function () {
         // Log the response
         $(".info-message").html("<h3>Article Saved!</h3>");
         $("#msgModal").modal("toggle");
+        $("#hdr-h3").html("Article Saved");
         console.log(data);
       });
 
@@ -70,7 +98,10 @@ $(document).ready(function () {
     $(this).parent().addClass("active");
     $(this).parent().siblings().removeClass("active");
 
+    $("#hdr-h3").html("Retrieving Saved Articles...");
+    
     $("#articles").empty();
+    $("#articles").css("visibility", "hidden");
 
     document.body.style.cursor = "wait";
 
@@ -82,7 +113,7 @@ $(document).ready(function () {
       // $("#msgModal").modal("toggle");
 
       for (var i = 0; i < data.length; i++) {
-        var $articleRow = $("<div>").addClass("row");
+        var $articleRow = $("<div>").addClass("row articles-row");
         var $articleBoxDiv = $("<div>").addClass("article-box text-left col-md-10 col-md-offset-1");
         var $headerRow = $("<div>").addClass("row saved-article-title");
         var $a = ($("<a>").addClass("article-link col-md-10").attr("href", data[i].link).attr("target", "_blank"));
@@ -104,12 +135,17 @@ $(document).ready(function () {
         $articleRow.append($articleBoxDiv);
         $("#articles").append($articleRow);
       }
+    }).done(function(data) {
+       $("#hdr-h3").html("Saved Articles");
+       if (data.length > 0) $("#articles").css("visibility", "visible");
+       else $("#articles").css("visibility", "hidden");
     });
 
   });
 
   $(document).on("click", ".delete-saved-article", function () {
     var articleId = $(this).data("_id");
+
 
     $.ajax({
       method: "DELETE",
@@ -121,11 +157,14 @@ $(document).ready(function () {
         $("#get-saved-articles").trigger("click");
         $(".info-message").html("<h3>Article with Id: " + data.id + " was deleted!</h3>");
         $("#msgModal").modal("toggle");
+        $("#hdr-h3").html("Deleted Saved Article");
       });
   });
 
   $(document).on("click", ".article-notes", function () {
 
+    $("#hdr-h3").html("Displaying Articles Notes");
+    
     var article_id = $(this).data("_id");
 
     //save the article_id to the save button so that we can retrieve it later for the save
@@ -165,6 +204,8 @@ $(document).ready(function () {
   });
 
   $(document).on("click", "#note-save", function () {
+    $("#hdr-h3").html("Saving Article Note...");
+    
     var article_id = $(this).data("article_id");
     var noteTitle = $("#note-title").val();
     var noteBody = $("#note-body").val();
@@ -181,11 +222,13 @@ $(document).ready(function () {
         // Log the response
         $("#note-title").val("");
         $("#note-body").val("");
+        $("#hdr-h3").html("Article Note Saved");
       });
 
   });
 
   $(document).on("click", ".delete-note", function () {
+    
     var articleId = $(this).data("article_id");
     var id = $(this).data("_id");
 
@@ -195,9 +238,14 @@ $(document).ready(function () {
     })
       .done(function (data) {
         $("#notesModal").modal("toggle");
+        $("#hdr-h3").html("Deleted Article Note");
       });
   });
 
+  $(document).on("click", "#note-cancel", function () {
 
+    $("#hdr-h3").html("Saved Articles");
+
+  });
 
 });
